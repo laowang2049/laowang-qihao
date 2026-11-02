@@ -1,0 +1,14 @@
+# 渲染中间产物
+projects/*/frames/
+projects/*/stills/
+projects/*/out/
+projects/*/audio/
+projects/*/bgm.wav
+__pycache__/
+*.pyc
+
+# 本机路径与选择记录（不进仓库）
+config.local.json
+picks/choice.json
+picks/history.jsonl
+.DS_Store

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>老王 vibe video</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #0b0d12; overflow: hidden; }
+  /* 画幅由 SCENE.size 决定，JS 启动时写进来：横版 1920×1080、竖版 1080×1920 */
+  #stage { position: relative; overflow: hidden; transform-origin: 0 0; }
+  #c { display: block; }
+  body.render #stage { transform: none !important; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c"></canvas>
+</div>
+
+<script src="runtime.js"></script>
+<script>
+/* =========================================================================
+ * 这是「老王 vibe video」的通用舞台。
+ *
+ * AI 只需要改下面 SCENE 里的内容，其余（画幅、时长、播放、截图）都现成。
+ *
+ * 硬性契约（render.py 依赖这三样）：
+ *   SCENE.size            画幅 [宽, 高]：横版 [1920,1080]，竖版 [1080,1920]
+ *   SCENE.duration        全片秒数
+ *   SCENE.draw(ctx,t,w,h) 只由 t 决定画面，不许用 Date.now / 随机数 / 累加
+ *   window.__ready        字体就绪、资源加载完才置 true
+ * ========================================================================= */
+
+const SCENE = {
+  title: '标题占位',
+  duration: 6,
+  size: [1920, 1080],
+
+  // 可选：加载资源的异步初始化，做完调 done()
+  init(done) { done(); },
+
+  draw(ctx, t, w, h) {
+    // ---- 下面这段只是「能跑起来的占位画面」，真正做片时整段替换 ----
+    LV.clear(ctx, w, h, '#101418');
+    LV.flowField(ctx, t, { w, h, count: 120, color: 'rgba(120,170,220,.28)', seed: 11 });
+
+    // 标题：两段语义，错开 0.18 秒上浮
+    const parts = [
+      { text: this.title, at: 0.2 },
+      { text: '把主题换成你要讲的那句话', at: 0.55 },
+    ];
+    parts.forEach((p, i) => {
+      const e = LV.ease.outCubic(LV.unit(t, p.at, p.at + 0.7));
+      LV.text(ctx, p.text, {
+        x: w / 2, y: h / 2 - 40 + i * 96 + (1 - e) * 46,
+        size: i === 0 ? 96 : 40, weight: i === 0 ? 700 : 400,
+        color: i === 0 ? '#f4f7fb' : 'rgba(244,247,251,.72)',
+        align: 'center', baseline: 'middle', alpha: e,
+      });
+    });
+
+    // 字幕层（正式做片时改成按分镜出现）
+    if (t > 1.6) {
+      LV.subtitle(ctx, '这里是字幕示范：一屏别超过两行，最后一行落稳后再留读的时间。', t, { w, h, at: 1.6, size: 44 });
+    }
+  },
+};
+
+/* ---------------- 以下不用改 ---------------- */
+
+const qs = new URLSearchParams(location.search);
+const isRender = qs.get('render') === '1';
+if (isRender) document.body.classList.add('render');
+
+// 画幅：SCENE.size 说了算，没写就退回横版
+const [VW, VH] = (Array.isArray(SCENE.size) && SCENE.size.length === 2)
+  ? SCENE.size : [1920, 1080];
+const cvEl = document.getElementById('c');
+cvEl.width = VW; cvEl.height = VH;
+cvEl.style.width = VW + 'px'; cvEl.style.height = VH + 'px';
+const stageEl = document.getElementById('stage');
+stageEl.style.width = VW + 'px'; stageEl.style.height = VH + 'px';
+
+const { cv, ctx, w, h } = LV.canvas('c');
+window.__duration = SCENE.duration;
+window.__size = [w, h];
+window.render = (t) => { SCENE.draw(ctx, t, w, h); };
+
+function fit() {
+  if (isRender) return;
+  const s = Math.min(innerWidth / w, innerHeight / h);
+  const st = document.getElementById('stage');
+  st.style.transform = `scale(${s})`;
+  st.style.marginLeft = `${(innerWidth - w * s) / 2}px`;
+  st.style.marginTop = `${(innerHeight - h * s) / 2}px`;
+}
+addEventListener('resize', fit);
+
+(async function boot() {
+  await document.fonts.ready;
+  await new Promise(r => SCENE.init(r));
+  window.render(0);
+  window.__ready = true;
+  if (!isRender) {
+    fit();
+    const t0 = performance.now();
+    (function loop() {
+      const t = ((performance.now() - t0) / 1000) % SCENE.duration;
+      window.render(t);
+      requestAnimationFrame(loop);
+    })();
+  }
+})();
+</script>
+</body>
+</html>

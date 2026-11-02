@@ -1,0 +1,42 @@
+MIT License（仅限本仓库原创部分）
+
+Copyright (c) 2026 老王
+
+---
+
+## 适用范围（重要）
+
+本许可只覆盖 laowang-qihao 的原创部分：
+
+- `SKILL.md`、`README.md`、`NOTICE.md`
+- `scripts/` 下的全部脚本
+- `assets/` 下的示例图与文案提示词
+
+**不覆盖** `vendor/laowang-vibe-video/` 目录下的任何内容。那是 laowang-vibe-video 的
+完整内置副本，其许可与署名以 `vendor/laowang-vibe-video/NOTICE.md` 为准
+
+
+**不主张**对使用者产出的图片、视频的任何权利——用本技能做出来的东西归使用者所有，
+可自由商用。
+
+---
+
+## MIT 正文
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

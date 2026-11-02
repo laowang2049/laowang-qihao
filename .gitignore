@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+
+# 用户自己放的字体（不随仓库分发）
+fonts/*.ttf
+fonts/*.otf
+fonts/*.ttc
+
+# 内置 vibe 跑起来产生的东西
+vendor/laowang-vibe-video/projects/
+vendor/laowang-vibe-video/picks/
+vendor/laowang-vibe-video/**/out/
+vendor/laowang-vibe-video/**/frames/
+vendor/laowang-vibe-video/**/stills/
+
+# 本地临时产物（跑一次就会生成，发布前用 scripts/clean.py --yes 清掉）
+out/
+draft.jpg
+draft.json
+final.jpg
+*.png
+!assets/*.png
+.DS_Store

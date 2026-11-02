@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>老王 vibe video · 341 画风选型</title>
+<style>
+  :root{
+    --ink:#15171c; --muted:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; --card:#fff;
+    --accent:#111827; --accent2:#c2410c; --ok:#0f766e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.55 "Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+       -webkit-text-size-adjust:100%;}
+  body.lock{overflow:hidden}
+
+  header{background:#fff;padding:12px 22px 10px;display:flex;align-items:baseline;gap:14px;
+         flex-wrap:wrap;border-bottom:1px solid #f1f2f4}
+  .brand{font-size:25px;font-weight:700;letter-spacing:.06em;color:var(--accent2);white-space:nowrap}
+  .brand small{font-size:13px;font-weight:400;color:var(--muted);letter-spacing:0;margin-left:8px}
+  .how{font-size:12.5px;color:var(--muted);background:#f9fafb;border:1px solid var(--line);
+       border-radius:6px;padding:3px 9px}
+  .how b{color:var(--accent2)}
+  .how-m{display:none}
+  .count{margin-left:auto;font-size:13px;color:var(--muted);white-space:nowrap}
+
+  .bars{padding:8px 22px 9px;background:#fff;border-bottom:1px solid var(--line);
+        position:sticky;top:0;z-index:30;display:flex;flex-direction:column;gap:7px}
+  .catrow{display:flex;gap:8px;align-items:center;width:100%;overflow-x:auto;
+          scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .catrow::-webkit-scrollbar{display:none}
+  .catrow #cats{display:flex;gap:8px;flex-wrap:nowrap}
+  .filterrow{display:flex;gap:8px;align-items:center;width:100%;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:#fff;color:#374151;border-radius:999px;
+        padding:4px 11px;font-size:12.5px;cursor:pointer;white-space:nowrap;flex:0 0 auto}
+  .chip:hover{border-color:#9ca3af}
+  .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  input[type=search]{flex:1;min-width:170px;max-width:300px;border:1px solid var(--line);
+        border-radius:8px;padding:7px 11px;font-size:13px;outline:none;background:#fff}
+  input[type=search]:focus{border-color:#9ca3af}
+
+  main{display:flex;gap:0;align-items:flex-start}
+  #grid{flex:1;padding:16px 22px 60px;display:grid;gap:14px;
+        grid-template-columns:repeat(auto-fill,minmax(196px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+        cursor:pointer;transition:box-shadow .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
+  .card:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .card.on{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(194,65,12,.18)}
+  .thumb{width:100%;aspect-ratio:16/9;background:#eceff3;display:block;object-fit:cover}
+  .noimg{width:100%;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+         background:repeating-linear-gradient(45deg,#eef0f3,#eef0f3 8px,#e6e9ee 8px,#e6e9ee 16px);
+         color:#9aa1ab;font-size:12px;letter-spacing:.02em;text-align:center;padding:0 6px}
+  .meta{padding:9px 11px 11px}
+  .nm{font-size:13px;font-weight:600;line-height:1.4;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .id{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .tag{font-size:11px;border-radius:4px;padding:1px 5px;background:#f3f4f6;color:#6b7280}
+  .tag.warn{background:#fef3c7;color:#92400e}
+
+  /* ---- 桌面：右侧常驻详情面板（按钮钉在面板底部，不随内容滚走） ---- */
+  aside{width:392px;position:sticky;top:var(--top,124px);height:calc(100vh - var(--top,124px));
+        background:#fff;border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+  aside .empty{color:var(--muted);padding:40px 22px;font-size:13px}
+  .panel{position:relative;display:flex;flex-direction:column;height:100%;min-height:0;flex:1 1 auto}
+  .panel-scroll{flex:1 1 auto;min-height:0;overflow:auto;padding:18px 20px 8px;
+                -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .panel-foot{flex:none;padding:12px 20px 16px;border-top:1px solid var(--line);background:#fff}
+  .handle{display:none}
+  .x{display:none}
+  .big{width:100%;border-radius:8px;margin-bottom:14px;background:#eceff3;display:block;min-height:60px}
+  .nopic{border:1px dashed var(--line);border-radius:8px;padding:18px 14px;margin-bottom:14px;
+         background:#fafafa;color:var(--muted);font-size:12.5px;text-align:center;line-height:1.7}
+  aside h2{font-size:19px;margin:0 0 4px;line-height:1.35}
+  aside .sub{color:var(--muted);font-size:12.5px;margin-bottom:14px}
+  .kv{font-size:13px;margin:10px 0;color:#374151}
+  .kv b{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-bottom:2px}
+  .go{width:100%;padding:13px;border:0;border-radius:9px;background:var(--accent2);
+      color:#fff;font-size:15.5px;font-weight:600;cursor:pointer;letter-spacing:.04em}
+  .go:hover{background:#9a3412}
+  .go:active{transform:translateY(1px)}
+  .hint{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.6}
+  .now{font-size:12px;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;
+       border-radius:6px;padding:3px 8px}
+  .empty{color:var(--muted);padding:40px 22px;font-size:13px}
+
+  #sheetMask{display:none;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:55}
+
+  #mask{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;
+        align-items:center;justify-content:center;z-index:99;padding:16px;overflow:auto}
+  #mask.on{display:flex}
+  .done{background:#fff;border-radius:14px;padding:26px 32px 24px;max-width:460px;width:100%;
+        max-height:calc(100vh - 32px);overflow:auto;text-align:center}
+  .done .k{font-size:12px;color:var(--ok);letter-spacing:.08em}
+  .done .k.bad{color:var(--accent2)}
+  .code{width:100%;margin:10px 0 4px;border:1px solid var(--line);background:#fbfbfc;border-radius:9px;
+        padding:11px 12px;font:700 30px/1.2 ui-monospace,Consolas,"Courier New",monospace;
+        letter-spacing:.12em;text-align:center;color:var(--accent2);outline:none;cursor:text}
+  .code:focus{border-color:#9ca3af}
+  .done .n{font-size:15px;color:#374151;margin-top:6px}
+  .done .tip{margin-top:16px;font-size:13px;color:#4b5563;line-height:1.7;
+             background:#f9fafb;border-radius:8px;padding:11px 13px;text-align:left}
+  .done .row{display:flex;gap:8px;margin-top:16px}
+  .done button{flex:1;padding:10px 14px;border:1px solid var(--line);background:#fff;
+               border-radius:8px;cursor:pointer;font-size:13.5px}
+  .done button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* ---- 平板 / 手机：详情改成底部抽屉，按钮常驻在抽屉底部 ---- */
+  @media (max-width:1023px){
+    main{display:block}
+    .how-d{display:none}
+    .how-m{display:inline}
+    #grid{padding:14px 16px 72px;gap:12px;grid-template-columns:repeat(auto-fill,minmax(158px,1fr))}
+    aside{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;
+          max-height:86vh;max-height:86dvh;border-left:0;border-radius:16px 16px 0 0;
+          box-shadow:0 -10px 34px rgba(0,0,0,.22);z-index:60;
+          transform:translateY(103%);transition:transform .26s cubic-bezier(.32,.72,0,1);
+          will-change:transform}
+    aside.open{transform:translateY(0)}
+    aside .empty{display:none}
+    aside .panel{height:auto;max-height:100%}
+    .handle{display:block;flex:none;width:40px;height:4px;border-radius:2px;
+            background:#d5d8de;margin:9px auto 5px}
+    .x{display:flex;align-items:center;justify-content:center;position:absolute;right:12px;top:10px;
+       width:32px;height:32px;padding:0 0 2px;border:0;border-radius:50%;background:#f3f4f6;
+       color:#4b5563;font-size:19px;line-height:1;cursor:pointer;z-index:3}
+    .panel-scroll{padding:2px 18px 6px}
+    .panel-foot{padding:10px 18px calc(12px + env(safe-area-inset-bottom));
+                box-shadow:0 -6px 18px rgba(17,24,39,.06)}
+    .panel-foot .hint{display:none}
+    .big{margin-top:10px;aspect-ratio:16/9;object-fit:cover;background:#f3f4f6;max-height:34vh}
+    .nopic{margin-top:10px}
+    aside h2{font-size:18px}
+    .go{padding:14px;font-size:16px}
+    #sheetMask.on{display:block}
+  }
+
+  /* ---- 横屏手机：竖向空间紧张，图缩一点，把位置让给文字 ---- */
+  @media (max-height:480px){
+    .big{max-height:22vh}
+    aside h2{font-size:16px}
+    .kv{margin:7px 0}
+  }
+
+  /* ---- 手机 ---- */
+  @media (max-width:767px){
+    header{padding:9px 14px 8px;gap:8px}
+    .brand{font-size:19px}
+    .brand small{display:none}
+    .how{padding:2px 8px;font-size:11.5px}
+    .count{font-size:11.5px}
+    .bars{padding:7px 14px 8px;gap:6px}
+    .chip{padding:6px 12px;font-size:12.5px}
+    #f-full{display:none}
+    input[type=search]{flex:1 1 130px;min-width:130px;max-width:none;padding:6px 10px;font-size:16px}
+    #grid{padding:12px 12px 64px;gap:10px;grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
+    .meta{padding:8px 9px 9px}
+    .nm{font-size:12.5px}
+    .id{font-size:11.5px;gap:5px}
+    .tag{font-size:10.5px}
+    .noimg{font-size:11px}
+    #mask{padding:16px}
+    .done{padding:22px 18px 18px;border-radius:14px}
+    .code{font-size:26px;letter-spacing:.08em;padding:10px}
+    .done .n{font-size:14px}
+    .done .row{flex-direction:column;gap:8px}
+    .done button{padding:12px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">老王<small>vibe video · 341 画风选型</small></div>
+  <div class="how">
+    <span class="how-d">点开看大图 → 点「<b>就选这个画风</b>」→ 编号自动复制 → 回对话 <b>Ctrl+V</b> 粘给我</span>
+    <span class="how-m">点「<b>就选这个</b>」→ 复制编号</span>
+  </div>
+  <div class="count" id="count"></div>
+</header>
+
+<div class="bars">
+  <div class="catrow">
+    <button class="chip on" data-cat="all">全部</button>
+    <div id="cats"></div>
+  </div>
+  <div class="filterrow">
+    <button class="chip" id="f-still">只看有图</button>
+    <button class="chip" id="f-full">只看提示词长</button>
+    <button class="chip on" id="f-empty">隐藏缺失</button>
+    <input type="search" id="q" placeholder="搜：蓝图 / 水墨 / 报纸 / 情绪 …">
+  </div>
+</div>
+
+<main>
+  <div id="grid"></div>
+  <aside id="side"><div class="empty">左边点一个画风，这里看大图和描述。</div></aside>
+</main>
+
+<div id="sheetMask"></div>
+
+<div id="mask">
+  <div class="done">
+    <div class="k" id="d-k">已复制画风编号</div>
+    <input class="code" id="d-code" readonly value="" spellcheck="false">
+    <div class="n" id="d-nm">—</div>
+    <div class="tip" id="d-tip"></div>
+    <div class="row">
+      <button class="primary" id="d-again">再复制一次</button>
+      <button id="d-close">继续看别的</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = __DATA__;
+const state = { cat: DATA.default_cat || "all", q: "", onlyStill: false, onlyFull: false,
+                hideNoPrompt: true, sel: null };
+const grid = document.getElementById("grid");
+const side = document.getElementById("side");
+const sheetMask = document.getElementById("sheetMask");
+const mask = document.getElementById("mask");
+const dCode = document.getElementById("d-code");
+const dK = document.getElementById("d-k");
+const dNm = document.getElementById("d-nm");
+const dTip = document.getElementById("d-tip");
+
+const mqSheet = window.matchMedia("(max-width:1023px)");
+const mqPhone = window.matchMedia("(max-width:767px)");
+const mqTouch = window.matchMedia("(pointer: coarse)");
+const isSheet = () => mqSheet.matches;
+const isPhone = () => mqPhone.matches;
+
+/* 相对路径 → URL（文件名里有中文、空格、括号，逐段编码最稳） */
+const url = p => p.split("/").map(encodeURIComponent).join("/");
+const esc = s => String(s == null ? "" : s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function badges(e){
+  const t = [];
+  if (!e.still) t.push('<span class="tag">无预留图</span>');
+  if (e.quality === "short") t.push('<span class="tag warn">提示词短</span>');
+  if (e.quality === "empty") t.push('<span class="tag warn">提示词缺</span>');
+  return t.join("");
+}
+
+function filtered(){
+  const q = state.q.trim().toLowerCase();
+  return DATA.entries.filter(e => {
+    if (state.cat !== "all" && e.cat !== state.cat) return false;
+    if (state.hideNoPrompt && e.quality === "empty") return false;
+    if (state.onlyStill && !e.still) return false;
+    if (state.onlyFull && e.quality !== "full") return false;
+    if (!q) return true;
+    const hay = (e.id + " " + e.name + " " + e.cat_label + " " + e.look + " " + e.fit
+                 + " " + (e.keywords || []).join(" ")).toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function render(){
+  const rows = filtered();
+  const hidden = DATA.entries.length - rows.length;
+  const cat = DATA.cats.find(c => c.cat === state.cat);
+  document.getElementById("count").textContent = isPhone()
+    ? `${rows.length}/${DATA.entries.length}` + (cat ? "" : ` · 有图 ${DATA.with_still}`)
+    : `显示 ${rows.length} / ${DATA.entries.length} 条` + (hidden ? `（筛掉 ${hidden}）` : "")
+      + (cat ? ` · ${cat.label}` : ` · 有预留图 ${DATA.with_still}`);
+  if (!rows.length){
+    grid.innerHTML = '<div class="empty">没有符合条件的。把上面的筛选关掉试试。</div>';
+    return;
+  }
+  grid.innerHTML = rows.map(e => `
+    <div class="card ${state.sel === e.id ? "on" : ""}" data-id="${esc(e.id)}">
+      ${e.still
+        ? `<img class="thumb" loading="lazy" src="${url(e.still)}" alt="${esc(e.name)}">`
+        : `<div class="noimg">无预留画风图</div>`}
+      <div class="meta">
+        <div class="nm">${esc(e.name)}</div>
+        <div class="id"><span>${esc(e.id)}</span>${badges(e)}</div>
+      </div>
+    </div>`).join("");
+}
+
+function openSheet(){
+  if (!isSheet()) return;
+  side.classList.add("open");
+  sheetMask.classList.add("on");
+  document.body.classList.add("lock");
+}
+
+function closeSheet(){
+  side.classList.remove("open");
+  sheetMask.classList.remove("on");
+  document.body.classList.remove("lock");
+}
+
+function detail(e, open){
+  state.sel = e.id;
+  const cur = DATA.current === e.id ? ' <span class="now">当前已选</span>' : "";
+  side.innerHTML = `
+    <div class="handle"></div>
+    <div class="panel">
+      <button class="x" id="sheet-x" aria-label="关闭">×</button>
+      <div class="panel-scroll">
+        ${e.still
+          ? `<img class="big" src="${url(e.still)}" alt="${esc(e.name)}">`
+          : `<div class="nopic">这条没有预留画风图<br>只能按下面的文字描述判断</div>`}
+        <h2>${esc(e.name)}</h2>
+        <div class="sub">${esc(e.id)} · ${esc(e.cat_label)}${cur}</div>
+        <div class="kv"><b>长什么样</b>${esc(e.look) || "（原库没写）"}</div>
+        <div class="kv"><b>适合</b>${esc(e.fit) || "（原库没写）"}</div>
+        <div class="kv"><b>提示词</b>${e.prompt_chars} 字符${e.quality !== "full" ? "（偏短，细节要 AI 补）" : ""}</div>
+      </div>
+      <div class="panel-foot">
+        <button class="go" id="go">就选这个画风</button>
+        <div class="hint">点一下，编号自动复制。${mqTouch.matches ? "切回对话窗口长按粘贴就行。" : "回对话窗口按 Ctrl+V 粘给我就行，不用手抄。"}</div>
+      </div>
+    </div>`;
+  document.getElementById("go").onclick = () => choose(e);
+  document.getElementById("sheet-x").onclick = closeSheet;
+  const sc = side.querySelector(".panel-scroll");
+  if (sc) sc.scrollTop = 0;
+  if (open !== false) openSheet();
+  render();
+}
+
+async function copyText(text){
+  try{
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  }catch(err){ /* 继续走兜底 */ }
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;";
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  }catch(err){ return false; }
+}
+
+async function choose(e){
+  const ok = await copyText(e.id);
+  dCode.value = e.id;
+  dNm.textContent = e.name + " · " + e.cat_label;
+  dK.textContent = ok ? "已复制画风编号" : "没能自动复制，编号已选中";
+  dK.className = "k" + (ok ? "" : " bad");
+  dTip.innerHTML = ok
+    ? (mqTouch.matches
+        ? "已经复制好了。切回对话窗口，在输入框里<b>长按 → 粘贴</b>，把编号发给我，我就按这条画风的提示词做片。"
+        : "回对话窗口按 <b>Ctrl+V</b>（Mac 是 <b>⌘V</b>）把编号粘给我，我就按这条画风的提示词做片。")
+    : "浏览器拦了剪贴板（本地 html 偶发）。这行编号已经选中，按 <b>Ctrl+C</b> 复制，再粘给我。";
+  mask.classList.add("on");
+  if (!ok){ dCode.focus(); dCode.select(); }
+  DATA.current = e.id;
+  render();
+}
+
+/* 手机上关掉复制弹窗就顺手退回网格（接下来就是去聊天窗口粘贴了） */
+document.getElementById("d-close").onclick = () => {
+  mask.classList.remove("on");
+  if (isSheet()) closeSheet();
+};
+document.getElementById("d-again").onclick = async () => {
+  const ok = await copyText(dCode.value);
+  dK.textContent = ok ? "已复制画风编号" : "还是没复制成功，手动选中按 Ctrl+C";
+  dK.className = "k" + (ok ? "" : " bad");
+  if (!ok){ dCode.focus(); dCode.select(); }
+};
+mask.addEventListener("click", ev => { if (ev.target === mask) mask.classList.remove("on"); });
+sheetMask.onclick = closeSheet;
+
+document.addEventListener("keydown", ev => {
+  if (ev.key !== "Escape") return;
+  if (mask.classList.contains("on")) mask.classList.remove("on");
+  else closeSheet();
+});
+
+grid.addEventListener("click", ev => {
+  const card = ev.target.closest(".card");
+  if (!card) return;
+  const e = DATA.entries.find(x => x.id === card.dataset.id);
+  if (e) detail(e);
+});
+/* 桌面双击 = 直接复制；手机上双击会被当成缩放，不绑 */
+grid.addEventListener("dblclick", ev => {
+  if (isSheet()) return;
+  const card = ev.target.closest(".card");
+  if (!card) return;
+  const e = DATA.entries.find(x => x.id === card.dataset.id);
+  if (e) choose(e);
+});
+
+document.getElementById("cats").innerHTML = DATA.cats.map(c =>
+  `<button class="chip" data-cat="${esc(c.cat)}" title="共 ${c.n} 条">${esc(c.label)}</button>`).join("");
+
+function syncChips(){
+  document.querySelectorAll(".chip[data-cat]").forEach(x =>
+    x.classList.toggle("on", state.cat === "all" ? x.dataset.cat === "all" : x.dataset.cat === state.cat));
+  document.getElementById("f-still").classList.toggle("on", state.onlyStill);
+  document.getElementById("f-full").classList.toggle("on", state.onlyFull);
+  document.getElementById("f-empty").classList.toggle("on", state.hideNoPrompt);
+}
+
+document.querySelectorAll(".chip[data-cat]").forEach(b => b.onclick = () => {
+  state.cat = b.dataset.cat;
+  syncChips();
+  render();
+});
+document.getElementById("f-still").onclick = () => { state.onlyStill = !state.onlyStill; syncChips(); render(); };
+document.getElementById("f-full").onclick = () => { state.onlyFull = !state.onlyFull; syncChips(); render(); };
+document.getElementById("f-empty").onclick = () => { state.hideNoPrompt = !state.hideNoPrompt; syncChips(); render(); };
+document.getElementById("q").oninput = e => { state.q = e.target.value; render(); };
+
+/* 筛选栏吸顶，高度量出来给右侧详情面板对齐 */
+function syncTop(){
+  const h = document.querySelector(".bars").offsetHeight;
+  document.documentElement.style.setProperty("--top", h + "px");
+}
+window.addEventListener("resize", () => {
+  syncTop();
+  render();
+  if (!isSheet()) closeSheet();   // 从窄屏拉宽：抽屉状态要收掉，否则 body 还锁着滚动
+});
+
+if (DATA.current){
+  const e = DATA.entries.find(x => x.id === DATA.current);
+  if (e) detail(e, false);
+}
+syncTop();
+syncChips();
+render();
+
+/* 默认选中的分类可能不在可视范围（分类条横向滚动），开页时把它带到眼前 */
+(function revealDefaultCat(){
+  const chip = document.querySelector('.catrow .chip[data-cat].on');
+  if (chip) chip.scrollIntoView({block: "nearest", inline: "center"});
+})();
+</script>
+</body>
+</html>
